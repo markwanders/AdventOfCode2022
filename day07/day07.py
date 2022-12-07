@@ -22,5 +22,5 @@ for line in lines:
         for d in dir_path:
             dirs[d] = dirs[d] + size
 print(sum(v for v in dirs.values() if v <= 100000))
-
-
+needed_space = 30000000 - (70000000 - max(dirs.values()))
+print(min(v for v in dirs.values() if v >= needed_space))
