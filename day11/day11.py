@@ -33,27 +33,42 @@ class Monkey:
             return a * b
 
 
-monkeys = []
-for i in input:
-    lines = i.split("\n")
-    monkey = Monkey(list(map(int, re.findall(r'[0-9]+', lines[1]))),
-                    lines[2][19:],
-                    int(re.findall(r'[0-9]+', lines[3])[0]),
-                    int(re.findall(r'[0-9]+', lines[4])[0]),
-                    int(re.findall(r'[0-9]+', lines[5])[0]))
-    monkeys.append(monkey)
+def solve(part2=False):
+    modulo = 1
+    monkeys = []
+    for i in input:
+        lines = i.split("\n")
+        test = int(re.findall(r'[0-9]+', lines[3])[0])
+        modulo *= test
+        monkey = Monkey(list(map(int, re.findall(r'[0-9]+', lines[1]))),
+                        lines[2][19:],
+                        test,
+                        int(re.findall(r'[0-9]+', lines[4])[0]),
+                        int(re.findall(r'[0-9]+', lines[5])[0]))
+        monkeys.append(monkey)
 
-for _ in range(0, 20):
-    for monkey in monkeys:
-        while len(monkey.items) > 0:
-            level = monkey.items.pop(0)
-            monkey.inspections += 1
-            level = monkey.do_operation(level)
-            level = math.floor(level / 3)
-            if level % monkey.test == 0:
-                monkeys[monkey.true].items += [level]
-            else:
-                monkeys[monkey.false].items += [level]
-inspections = [m.inspections for m in monkeys]
-inspections.sort()
-print(inspections[-1] * inspections[-2])
+    if part2:
+        rounds = 10000
+    else:
+        rounds = 20
+    for _ in range(0, rounds):
+        for monkey in monkeys:
+            while len(monkey.items) > 0:
+                level = monkey.items.pop(0)
+                monkey.inspections += 1
+                level = monkey.do_operation(level)
+                if part2:
+                    level = level % modulo
+                else:
+                    level = math.floor(level / 3)
+                if level % monkey.test == 0:
+                    monkeys[monkey.true].items += [level]
+                else:
+                    monkeys[monkey.false].items += [level]
+    inspections = [m.inspections for m in monkeys]
+    inspections.sort()
+    print(inspections[-1] * inspections[-2])
+
+
+solve()
+solve(part2=True)
