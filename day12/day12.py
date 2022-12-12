@@ -6,11 +6,7 @@ class Node:
 
 grid = {}
 start, end = 0, 0
-
-
-def adjacent_nodes(n):
-    return [xy for xy in [n.xy + s for s in [1+0j, -1 + 0j, 1j, -1j]] if xy in grid.keys() and ord(grid[xy]) <= ord(grid[n.xy]) + 1]
-
+starts = []
 
 with open("input.txt") as f:
     for y, line in enumerate(f.read().split("\n")):
@@ -22,22 +18,34 @@ with open("input.txt") as f:
             elif c == 'E':
                 end = xy
                 grid[xy] = 'z'
+            elif c == 'a':
+                starts.append(xy)
+                grid[xy] = c
             else:
                 grid[xy] = c
 
-queue = [Node(start, 0)]
-visited = set()
-distances = {start: 0}
-while queue:
-    node = queue.pop(0)
-    visited.add(node.xy)
-    for adjacent in adjacent_nodes(node):
-        print(adjacent)
-        if adjacent in visited:
-            continue
-        newDistance = node.d + 1
-        if adjacent not in distances.keys() or distances[adjacent] > newDistance:
-            queue.append(Node(adjacent, newDistance))
-            distances[adjacent] = newDistance
-            queue.sort(key=lambda q: q.d)
-print(distances[end])
+
+def adjacent_nodes(n):
+    return [xy for xy in [n.xy + s for s in [1+0j, -1 + 0j, 1j, -1j]] if xy in grid.keys() and ord(grid[xy]) <= ord(grid[n.xy]) + 1]
+
+
+def path(starting_node):
+    queue = [Node(starting_node, 0)]
+    visited = set()
+    distances = {starting_node: 0}
+    while queue:
+        node = queue.pop(0)
+        visited.add(node.xy)
+        for adjacent in adjacent_nodes(node):
+            if adjacent in visited:
+                continue
+            new_distance = node.d + 1
+            if adjacent not in distances.keys() or distances[adjacent] > new_distance:
+                queue.append(Node(adjacent, new_distance))
+                distances[adjacent] = new_distance
+                queue.sort(key=lambda q: q.d)
+    return distances.get(end, float('inf'))
+
+
+print(path(start))
+print(min([p for p in [path(s) for s in starts]]))
