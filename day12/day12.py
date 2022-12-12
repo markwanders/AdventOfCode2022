@@ -51,4 +51,4 @@ def path(starting_nodes):
 
 
 print(path([start]))
-print(min([p for p in [path(starts)]]))
+print(path(starts))
