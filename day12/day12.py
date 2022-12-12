@@ -29,10 +29,13 @@ def adjacent_nodes(n):
     return [xy for xy in [n.xy + s for s in [1+0j, -1 + 0j, 1j, -1j]] if xy in grid.keys() and ord(grid[xy]) <= ord(grid[n.xy]) + 1]
 
 
-def path(starting_node):
-    queue = [Node(starting_node, 0)]
+def path(starting_nodes):
+    queue = []
+    distances = {}
     visited = set()
-    distances = {starting_node: 0}
+    for starting_node in starting_nodes:
+        queue.append(Node(starting_node, 0))
+        distances[starting_node] = 0
     while queue:
         node = queue.pop(0)
         visited.add(node.xy)
@@ -47,5 +50,5 @@ def path(starting_node):
     return distances.get(end, float('inf'))
 
 
-print(path(start))
-print(min([p for p in [path(s) for s in starts]]))
+print(path([start]))
+print(min([p for p in [path(starts)]]))
