@@ -38,13 +38,13 @@ def solve(part2=False):
     monkeys = []
     for i in input:
         lines = i.split("\n")
-        test = int(re.findall(r'[0-9]+', lines[3])[0])
+        test = int(re.findall(r'\d+', lines[3])[0])
         modulo *= test
-        monkey = Monkey(list(map(int, re.findall(r'[0-9]+', lines[1]))),
+        monkey = Monkey(list(map(int, re.findall(r'\d+', lines[1]))),
                         lines[2][19:],
                         test,
-                        int(re.findall(r'[0-9]+', lines[4])[0]),
-                        int(re.findall(r'[0-9]+', lines[5])[0]))
+                        int(re.findall(r'\d+', lines[4])[0]),
+                        int(re.findall(r'\d+', lines[5])[0]))
         monkeys.append(monkey)
 
     if part2:
