@@ -31,6 +31,7 @@ class Blueprint:
         self.clay = clay
         self.obsidian = obsidian
         self.geode = geode
+        self.cache = {}
 
     def __repr__(self):
         return "id: {id}, ore cost: {ore}, clay cost: {clay}, obsidian cost: {obsidian}, geode cost: {geode}" \
@@ -55,7 +56,7 @@ with open("input.txt") as f:
 
 
 def build_nothing(s):
-    return State(s.t + 1,
+    return State(s.t - 1,
                  s.ore + s.ore_bots,
                  s.ore_bots,
                  s.clay + s.clay_bots,
@@ -67,7 +68,7 @@ def build_nothing(s):
 
 
 def build_ore_bot(s, b):
-    return State(s.t + 1,
+    return State(s.t - 1,
                  s.ore + s.ore_bots - b.ore,
                  s.ore_bots + 1,
                  s.clay + s.clay_bots,
@@ -79,7 +80,7 @@ def build_ore_bot(s, b):
 
 
 def build_clay_bot(s, b):
-    return State(s.t + 1,
+    return State(s.t - 1,
                  s.ore + s.ore_bots - b.clay,
                  s.ore_bots,
                  s.clay + s.clay_bots,
@@ -91,7 +92,7 @@ def build_clay_bot(s, b):
 
 
 def build_obsidian_bot(s, b):
-    return State(s.t + 1,
+    return State(s.t - 1,
                  s.ore + s.ore_bots - b.obsidian[0],
                  s.ore_bots,
                  s.clay + s.clay_bots - b.obsidian[1],
@@ -103,7 +104,7 @@ def build_obsidian_bot(s, b):
 
 
 def build_geode_bot(s, b):
-    return State(s.t + 1,
+    return State(s.t - 1,
                  s.ore + s.ore_bots - b.geode[0],
                  s.ore_bots,
                  s.clay + s.clay_bots,
@@ -115,12 +116,12 @@ def build_geode_bot(s, b):
 
 
 def dfs(state, blueprint):
-    if state.t == 24:
+    if state.t == 0:
         return state.geode
-    if state.key() in cache.keys():
-        return cache[state.key()]
+    if state.key() in blueprint.cache.keys():
+        return blueprint.cache[state.key()]
     geodes = 0
-    if state.t < 23:
+    if state.t > 1:
         # always build geode bot if possible
         if state.ore >= blueprint.geode[0] and state.obsidian >= blueprint.geode[1]:
             new_state = build_geode_bot(state, blueprint)
@@ -140,13 +141,18 @@ def dfs(state, blueprint):
             geodes = max(geodes, dfs(new_state, blueprint))
     new_state = build_nothing(state)
     geodes = max(geodes, dfs(new_state, blueprint))
-    cache[state.key()] = geodes
+    blueprint.cache[state.key()] = geodes
     return geodes
 
 
 ans = 0
 for bp in blueprints:
-    cache = {}
-    max_geodes = dfs(State(0, 0, 1), bp)
+    max_geodes = dfs(State(24, 0, 1), bp)
     ans += bp.id * max_geodes
+print(ans)
+
+ans = 1
+for bp in blueprints[:3]:
+    max_geodes = dfs(State(32, 0, 1), bp)
+    ans *= max_geodes
 print(ans)
