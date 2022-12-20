@@ -2,7 +2,7 @@ import re
 
 
 class State:
-    def __init__(self, t, ore, ore_bots=0, clay=0, clay_bots=0, obsidian=0, obsidian_bots=0, geode=0, geode_bots=0):
+    def __init__(self, t, ore, ore_bots, clay=0, clay_bots=0, obsidian=0, obsidian_bots=0, geode=0, geode_bots=0):
         self.t = t
         self.ore = ore
         self.clay = clay
@@ -21,7 +21,7 @@ class State:
                     geode_bots=self.geode_bots)
 
     def key(self):
-        return (self.ore, self.ore_bots, self.clay, self.clay_bots, self.obsidian, self.obsidian_bots)
+        return self.t, self.ore, self.ore_bots, self.clay, self.clay_bots, self.obsidian, self.obsidian_bots, self.geode_bots
 
 
 class Blueprint:
@@ -120,23 +120,24 @@ def dfs(state, blueprint):
     if state.key() in cache.keys():
         return cache[state.key()]
     geodes = 0
-    # always build geode bot if possible
-    if state.ore >= blueprint.geode[0] and state.obsidian >= blueprint.geode[1] and state.t < 23:
-        new_state = build_geode_bot(state, blueprint)
-        return dfs(new_state, blueprint)
-    # build obsidian bot if obsidian/turn < max obsidian cost
-    if state.ore >= blueprint.obsidian[0] and state.clay >= blueprint.obsidian[1] \
-            and state.obsidian_bots < blueprint.max_obsidian_cost() and state.t < 23:
-        new_state = build_obsidian_bot(state, blueprint)
-        geodes = max(geodes, dfs(new_state, blueprint))
-    # build clay bot if clay/turn < max clay cost
-    if state.ore >= blueprint.clay and state.clay_bots < blueprint.max_clay_cost() and state.t < 23:
-        new_state = build_clay_bot(state, blueprint)
-        geodes = max(geodes, dfs(new_state, blueprint))
-    # build ore bot if ore/turn < max ore cost
-    if state.ore >= blueprint.ore and state.ore_bots < blueprint.max_ore_cost() and state.t < 23:
-        new_state = build_ore_bot(state, blueprint)
-        geodes = max(geodes, dfs(new_state, blueprint))
+    if state.t < 23:
+        # always build geode bot if possible
+        if state.ore >= blueprint.geode[0] and state.obsidian >= blueprint.geode[1]:
+            new_state = build_geode_bot(state, blueprint)
+            return dfs(new_state, blueprint)
+        # build obsidian bot if obsidian/turn < max obsidian cost
+        if state.ore >= blueprint.obsidian[0] and state.clay >= blueprint.obsidian[1] \
+                and state.obsidian_bots < blueprint.max_obsidian_cost():
+            new_state = build_obsidian_bot(state, blueprint)
+            geodes = max(geodes, dfs(new_state, blueprint))
+        # build clay bot if clay/turn < max clay cost
+        if state.ore >= blueprint.clay and state.clay_bots < blueprint.max_clay_cost():
+            new_state = build_clay_bot(state, blueprint)
+            geodes = max(geodes, dfs(new_state, blueprint))
+        # build ore bot if ore/turn < max ore cost
+        if state.ore >= blueprint.ore and state.ore_bots < blueprint.max_ore_cost():
+            new_state = build_ore_bot(state, blueprint)
+            geodes = max(geodes, dfs(new_state, blueprint))
     new_state = build_nothing(state)
     geodes = max(geodes, dfs(new_state, blueprint))
     cache[state.key()] = geodes
@@ -147,6 +148,5 @@ ans = 0
 for bp in blueprints:
     cache = {}
     max_geodes = dfs(State(0, 0, 1), bp)
-    print("BP#%i: max geodes %i" % (bp.id, max_geodes))
     ans += bp.id * max_geodes
 print(ans)
