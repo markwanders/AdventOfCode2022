@@ -48,9 +48,18 @@ for y, line in enumerate(lines):
 pos = grid - {start, finish}
 t = 0
 queue = {start}
-while finish not in queue:
+finished = 0
+goal = finish
+while finished < 3:
     t += 1
     blizzards = [b.move() for b in blizzards]
     neighbours = {n + d for d in (1, -1, 1j, -1j, 0) for n in queue if n in grid}
     queue = neighbours - {b.position for b in blizzards}
-print(t)
+    if goal in queue:
+        print(t)
+        finished += 1
+        queue = {goal}
+        if goal == start:
+            goal = finish
+        else:
+            goal = start
