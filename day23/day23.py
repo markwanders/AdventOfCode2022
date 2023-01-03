@@ -9,29 +9,29 @@ directions = ['N', 'S', 'W', 'E']
 
 def need_to_move(p):
     surrounding = {p + 1, p + 1 + 1j, p + 1j, p - 1, p - 1 - 1j, p - 1j, p + 1 - 1j, p - 1 + 1j}
-    return len(surrounding.intersection(elves)) > 0
+    return len(surrounding & elves) > 0
 
 
 def propose_move(d, p):
     if d == 'N':
-        if len(elves.intersection({p - 1j, p + 1 - 1j, p - 1 - 1j})) == 0:
+        if len(elves & {p - 1j, p + 1 - 1j, p - 1 - 1j}) == 0:
             return p - 1j
     elif d == 'S':
-        if len(elves.intersection({p + 1j, p + 1 + 1j, p - 1 + 1j})) == 0:
+        if len(elves & {p + 1j, p + 1 + 1j, p - 1 + 1j}) == 0:
             return p + 1j
     elif d == 'W':
-        if len(elves.intersection({p - 1, p - 1 - 1j, p - 1 + 1j})) == 0:
+        if len(elves & {p - 1, p - 1 - 1j, p - 1 + 1j}) == 0:
             return p - 1
     elif d == 'E':
-        if len(elves.intersection({p + 1, p + 1 - 1j, p + 1 + 1j})) == 0:
+        if len(elves & {p + 1, p + 1 - 1j, p + 1 + 1j}) == 0:
             return p + 1
 
 
 def answer():
-    min_y = min(e.imag for e in elves)
-    max_y = max(e.imag for e in elves)
-    min_x = min(e.real for e in elves)
-    max_x = max(e.real for e in elves)
+    min_y = int(min(e.imag for e in elves))
+    max_y = int(max(e.imag for e in elves))
+    min_x = int(min(e.real for e in elves))
+    max_x = int(max(e.real for e in elves))
     print((1 + max_x - min_x) * (1 + max_y - min_y) - len(elves))
 
 
@@ -43,7 +43,7 @@ while True:
         if need_to_move(elf):
             for direction in directions:
                 proposal = propose_move(direction, elf)
-                if proposal:
+                if proposal is not None:
                     proposals[elf] = proposal
                     if proposal in counter:
                         counter[proposal] += 1
