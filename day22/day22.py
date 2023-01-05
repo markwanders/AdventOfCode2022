@@ -79,47 +79,47 @@ for move in re.split('([RL])', route):
             new_direction = direction
             if next not in maze.keys():
                 if direction == 1:
-                    if position.imag <= 50:
+                    if 1 <= position.imag <= 50:  # B -> E
                         new_direction = -1
-                        next = complex(100, 150 - position.imag)
-                    elif 100 >= position.imag >= 51:
+                        next = complex(100, 151 - position.imag)
+                    elif 100 >= position.imag >= 51:  # C -> B
                         new_direction = -1j
                         next = complex(50 + position.imag, 50)
-                    elif 150 >= position.imag >= 101:
+                    elif 150 >= position.imag >= 101:  # E -> B
                         new_direction = -1
                         next = complex(150, 151 - position.imag)
-                    else:
+                    elif 200 >= position.imag >= 150:  # F -> E
                         new_direction = -1j
                         next = complex(position.imag - 100, 150)
                 elif direction == -1:
-                    if position.imag <= 50:
+                    if 1 <= position.imag <= 50:  # A -> D
                         new_direction = 1
                         next = complex(1, 151 - position.imag)
-                    elif 100 >= position.imag >= 51:
-                        new_direction = -1j
+                    elif 100 >= position.imag >= 51:  # C -> D
+                        new_direction = 1j
                         next = complex(position.imag - 50, 151)
-                    elif 150 >= position.imag >= 101:
+                    elif 150 >= position.imag >= 101:  # D -> A
                         new_direction = 1
                         next = complex(51, 151 - position.imag)
-                    else:
-                        new_direction = -1j
+                    elif 200 >= position.imag >= 151:  # F -> A
+                        new_direction = 1j
                         next = complex(position.imag - 100, 1)
                 elif direction == -1j:
-                    if position.real <= 50:
+                    if 1 <= position.real <= 50:  # D -> C
                         new_direction = 1
                         next = complex(51, 50 + position.real)
-                    elif 100 >= position.real >= 51:
+                    elif 100 >= position.real >= 51:  # A -> F
                         new_direction = 1
                         next = complex(1, position.real + 100)
-                    else:
+                    elif 150 >= position.real >= 101:  # B -> F
                         next = complex(position.real - 100, 200)
                 elif direction == 1j:
-                    if position.real <= 50:
+                    if 1 <= position.real <= 50:  # F -> B
                         next = complex(position.real + 100, 1)
-                    elif 100 >= position.real >= 51:
+                    elif 100 >= position.real >= 51:  # E -> F
                         new_direction = -1
                         next = complex(50, position.real + 100)
-                    else:
+                    elif 150 >= position.real >= 101:  # B -> C
                         new_direction = -1
                         next = complex(100, position.real - 50)
             if maze[next] == "#":
