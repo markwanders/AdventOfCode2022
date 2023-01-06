@@ -87,4 +87,4 @@ for move in re.split('([RL])', route):
                 next, new_direction = wrap(next, direction)
             if maze[next] == ".":
                 position, direction = next, new_direction
-print(int(1000 * position.imag + 4 * position.real + direction_value[direction]))
+print(int(1000 * (1 + position.imag) + 4 * (1 + position.real) + direction_value[direction]))
